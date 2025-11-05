@@ -504,20 +504,77 @@ const App: React.FC = () => {
             </div>
             {/* Desktop Table View */}
             <div className="hidden md:block bg-white rounded-lg shadow-sm border border-slate-200/80 overflow-x-auto">
-                <table className="w-full text-sm text-left text-gray-500"><thead className="text-xs text-gray-700 uppercase bg-gray-50"><tr><th scope="col" className="px-6 py-3">Patient</th><th scope="col" className="px-6 py-3">Date Issued</th><th scope="col" className="px-6 py-3">Medications</th><th scope="col" className="px-6 py-3 text-right">Actions</th></tr></thead>
-                    <tbody>{(filteredData as Prescription[]).sort((a,b) => new Date(b.dateIssued).getTime() - new Date(a.dateIssued).getTime()).map(p => (<tr key={p.id} className="bg-white border-b border-slate-200/80 hover:bg-gray-50">
-                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{getPatientName(p.patientId)}</td>
-                        <td className="px-6 py-4">{formatDate(p.dateIssued)}</td>
-                        <td className="px-6 py-4">{p.medications[0]?.medication || 'N/A'}{p.medications.length > 1 ? ` (+${p.medications.length-1} more)`:''}</p>
-                        <td className="px-6 py-4 text-right">
+              <table className="w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">Patient</th>
+                    <th scope="col" className="px-6 py-3">Date Issued</th>
+                    <th scope="col" className="px-6 py-3">Medications</th>
+                    <th scope="col" className="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {(filteredData as Prescription[])
+                    .sort((a, b) => {
+                      const ta = new Date(a?.dateIssued ?? 0).getTime() || 0;
+                      const tb = new Date(b?.dateIssued ?? 0).getTime() || 0;
+                      return tb - ta;
+                    })
+                    .map((p) => {
+                      const medsCount = p.medications?.length ?? 0;
+                      const firstMed = p.medications?.[0]?.medication ?? "N/A";
+                      const moreLabel = medsCount > 1 ? ` (+${medsCount - 1} more)` : "";
+                      return (
+                        <tr key={p.id} className="bg-white border-b border-slate-200/80 hover:bg-gray-50">
+                          <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            {getPatientName(p.patientId)}
+                          </td>
+
+                          <td className="px-6 py-4">
+                            {formatDate(p.dateIssued)}
+                          </td>
+
+                          <td className="px-6 py-4">
+                            {firstMed}{moreLabel}
+                          </td>
+
+                          <td className="px-6 py-4 text-right">
                             <div className="flex justify-end items-center gap-2">
-                                <button onClick={() => handlePrintPrescriptionFromList(p.id)} className="text-slate-500 hover:text-cyan-600 p-1" title="Print Prescription">{ICONS.print}</button>
-                                <button onClick={() => { setEditingPrescription(p); setPrescriptionForPatientId(p.patientId); setPrescriptionModalOpen(true); }} className="text-slate-500 hover:text-cyan-600 p-1" title="Edit Prescription">{ICONS.edit}</button>
-                                <button onClick={() => handleDeletePrescription(p.id)} className="text-slate-500 hover:text-red-600 p-1" title="Delete Prescription">{ICONS.delete}</button>
+                              <button
+                                onClick={() => handlePrintPrescriptionFromList(p.id)}
+                                className="text-slate-500 hover:text-cyan-600 p-1"
+                                title="Print Prescription"
+                              >
+                                {ICONS.print}
+                              </button>
+
+                              <button
+                                onClick={() => {
+                                  setEditingPrescription(p);
+                                  setPrescriptionForPatientId(p.patientId);
+                                  setPrescriptionModalOpen(true);
+                                }}
+                                className="text-slate-500 hover:text-cyan-600 p-1"
+                                title="Edit Prescription"
+                              >
+                                {ICONS.edit}
+                              </button>
+
+                              <button
+                                onClick={() => handleDeletePrescription(p.id)}
+                                className="text-slate-500 hover:text-red-600 p-1"
+                                title="Delete Prescription"
+                              >
+                                {ICONS.delete}
+                              </button>
                             </div>
-                        </td>
-                    </tr>))}</tbody>
-                </table>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
             </div>
         </div>
     );
