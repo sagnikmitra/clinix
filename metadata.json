@@ -1,0 +1,5 @@
+{
+  "name": "Dental Clinic Management System",
+  "description": "A comprehensive dental clinic management application for managing patient records, appointments, and prescriptions. This application provides a seamless interface for dental professionals to streamline their workflow, from scheduling appointments to issuing digital prescriptions and maintaining detailed patient histories.",
+  "requestFramePermissions": []
+}
