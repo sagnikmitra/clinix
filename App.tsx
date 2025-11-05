@@ -960,7 +960,7 @@ const App: React.FC = () => {
             <Modal isOpen={isPatientModalOpen} onClose={() => { setEditingPatient(null); setPatientModalOpen(false); }} title={editingPatient ? 'Edit Patient' : 'Add New Patient'}>
                 <PatientForm />
             </Modal>
-            <Modal isOpen={isInlinePatientModalOpen} onClose={() => setInlinePatientModalOpen(false)} title="Add New Patient">
+            <Modal isOpen={isInlinePatientModalOpen} onClose={() => setInlinePatientModalOpen(false)} title="Add New Patient" zIndex="z-[60]">
                 <PatientForm isInline={true} />
             </Modal>
             <Modal isOpen={isAppointmentModalOpen} onClose={() => { setEditingAppointment(null); setAppointmentModalOpen(false); }} title={editingAppointment ? 'Edit Appointment' : 'Add New Appointment'}>
