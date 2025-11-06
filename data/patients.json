@@ -1,0 +1,5 @@
+
+[
+    { "id": "p1", "name": "John Doe", "email": "john.doe@email.com", "phone": "123-456-7890", "dob": "1985-05-20", "gender": "Male", "address": "123 Main St, Anytown, USA", "medicalHistory": "Hypertension", "allergies": "Penicillin" },
+    { "id": "p2", "name": "Jane Smith", "email": "jane.smith@email.com", "phone": "234-567-8901", "dob": "1992-08-15", "gender": "Female", "address": "456 Oak Ave, Anytown, USA", "medicalHistory": "None", "allergies": "None" }
+]

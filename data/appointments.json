@@ -1,0 +1,6 @@
+
+[
+    { "id": "a1", "patientId": "p1", "date": "2024-08-01T10:00:00.000Z", "duration": 60, "reason": "Annual Checkup", "notes": "Routine cleaning and checkup.", "status": "Scheduled", "totalFee": 1500, "paymentHistory": [], "paymentStatus": "Unpaid", "vitals": { "temp": "36.8 C", "bp": "122/81 mmHg" }, "adviceGiven": "Brush twice daily.", "followUpDate": "2025-01-28T10:00:00.000Z" },
+    { "id": "a2", "patientId": "p2", "date": "2024-07-25T14:30:00.000Z", "duration": 45, "reason": "Toothache", "notes": "Pain in upper right molar.", "status": "Completed", "totalFee": 2500, "paymentHistory": [{"id": "pay1", "date": "2024-07-25T14:30:00.000Z", "amount": 2500, "method": "Card"}], "paymentStatus": "Paid", "vitals": { "temp": "37.1 C", "bp": "118/75 mmHg" }, "adviceGiven": "Avoid hard foods on the right side.", "followUpDate": "2024-08-09T10:00:00.000Z" },
+    { "id": "a3", "patientId": "p1", "date": "2024-07-20T11:00:00.000Z", "duration": 90, "reason": "Crown Fitting", "notes": "Permanent crown placed.", "status": "Completed", "totalFee": 12000, "paymentHistory": [{"id": "pay2", "date": "2024-07-20T11:00:00.000Z", "amount": 6000, "method": "Cash"}], "paymentStatus": "Partially Paid", "vitals": { "temp": "36.9 C", "bp": "125/85 mmHg" }, "adviceGiven": "Floss regularly around the crown.", "followUpDate": "" }
+]

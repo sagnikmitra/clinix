@@ -1,0 +1,20 @@
+
+[
+    {
+        "id": "pr1",
+        "patientId": "p2",
+        "appointmentId": "a2",
+        "medications": [{ "id": "m1690300800000", "medication": "Amoxicillin 500mg", "dosage": "1 tablet", "frequency": "3 times a day", "duration": "7 days", "instructions": "Take with food." }],
+        "dateIssued": "2024-07-25T14:30:00.000Z"
+    },
+    {
+        "id": "pr2",
+        "patientId": "p1",
+        "appointmentId": "a3",
+        "medications": [
+            { "id": "m1690300800001", "medication": "Ibuprofen 400mg", "dosage": "1 tablet", "frequency": "As needed for pain", "duration": "5 days", "instructions": "Max 3 per day." },
+            { "id": "m1690300800002", "medication": "Chlorhexidine Mouthwash", "dosage": "10ml rinse", "frequency": "Twice daily", "duration": "1 week", "instructions": "Do not swallow." }
+        ],
+        "dateIssued": "2024-07-20T11:00:00.000Z"
+    }
+]

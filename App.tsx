@@ -1,7 +1,18 @@
+
+
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Patient, Appointment, Prescription, AppointmentStatus, PaymentStatus, MedicationItem, Payment } from './types';
 import { STATUS_COLORS, PAYMENT_STATUS_COLORS, ICONS, DOCTOR_INFO, CLINIC_INFO } from './constants';
 import Modal from './components/Modal';
+
+import initialPatientsData from './data/patients.json';
+import initialAppointmentsData from './data/appointments.json';
+import initialPrescriptionsData from './data/prescriptions.json';
+
+const initialPatients: Patient[] = initialPatientsData as Patient[];
+const initialAppointments: Appointment[] = initialAppointmentsData as Appointment[];
+const initialPrescriptions: Prescription[] = initialPrescriptionsData as Prescription[];
+
 
 // --- FORMATTING HELPERS ---
 const formatDate = (isoString?: string): string => {
@@ -43,65 +54,6 @@ const formatCurrency = (amount: number): string => {
     }).format(amount);
 };
 
-
-// --- DATA PERSISTENCE HOOK ---
-function usePersistentState<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
-    const [state, setState] = useState<T>(() => {
-        try {
-            const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
-        } catch (error) {
-            console.error(`Error reading localStorage key "${key}":`, error);
-            return initialValue;
-        }
-    });
-
-    const setPersistentState: React.Dispatch<React.SetStateAction<T>> = (value) => {
-        try {
-            const valueToStore = value instanceof Function ? value(state) : value;
-            setState(valueToStore);
-            window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        } catch (error) {
-            console.error(`Error setting localStorage key "${key}":`, error);
-        }
-    };
-
-    return [state, setPersistentState];
-}
-
-
-// --- MOCK DATA ---
-const initialPatients: Patient[] = [
-    { id: 'p1', name: 'John Doe', email: 'john.doe@email.com', phone: '123-456-7890', dob: '1985-05-20', gender: 'Male', address: '123 Main St, Anytown, USA', medicalHistory: 'Hypertension', allergies: 'Penicillin' },
-    { id: 'p2', name: 'Jane Smith', email: 'jane.smith@email.com', phone: '234-567-8901', dob: '1992-08-15', gender: 'Female', address: '456 Oak Ave, Anytown, USA', medicalHistory: 'None', allergies: 'None' },
-];
-
-const initialAppointments: Appointment[] = [
-    { id: 'a1', patientId: 'p1', date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), duration: 60, reason: 'Annual Checkup', notes: 'Routine cleaning and checkup.', status: AppointmentStatus.Scheduled, totalFee: 1500, paymentHistory: [], paymentStatus: PaymentStatus.Unpaid, vitals: { temp: "36.8 C", bp: "122/81 mmHg" }, adviceGiven: "Brush twice daily.", followUpDate: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString() },
-    { id: 'a2', patientId: 'p2', date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), duration: 45, reason: 'Toothache', notes: 'Pain in upper right molar.', status: AppointmentStatus.Completed, totalFee: 2500, paymentHistory: [{id: 'pay1', date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), amount: 2500, method: 'Card'}], paymentStatus: PaymentStatus.Paid, vitals: { temp: "37.1 C", bp: "118/75 mmHg" }, adviceGiven: "Avoid hard foods on the right side.", followUpDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString() },
-    { id: 'a3', patientId: 'p1', date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), duration: 90, reason: 'Crown Fitting', notes: 'Permanent crown placed.', status: AppointmentStatus.Completed, totalFee: 12000, paymentHistory: [{id: 'pay2', date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), amount: 6000, method: 'Cash'}], paymentStatus: PaymentStatus.PartiallyPaid, vitals: { temp: "36.9 C", bp: "125/85 mmHg" }, adviceGiven: "Floss regularly around the crown.", followUpDate: "" },
-];
-
-const initialPrescriptions: Prescription[] = [
-    {
-        id: 'pr1',
-        patientId: 'p2',
-        appointmentId: 'a2',
-        medications: [{ id: `m${Date.now()}`, medication: 'Amoxicillin 500mg', dosage: '1 tablet', frequency: '3 times a day', duration: '7 days', instructions: 'Take with food.' }],
-        dateIssued: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
-    },
-    {
-        id: 'pr2',
-        patientId: 'p1',
-        appointmentId: 'a3',
-        medications: [
-            { id: `m${Date.now() + 1}`, medication: 'Ibuprofen 400mg', dosage: '1 tablet', frequency: 'As needed for pain', duration: '5 days', instructions: 'Max 3 per day.' },
-            { id: `m${Date.now() + 2}`, medication: 'Chlorhexidine Mouthwash', dosage: '10ml rinse', frequency: 'Twice daily', duration: '1 week', instructions: 'Do not swallow.' }
-        ],
-        dateIssued: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
-    }
-];
-
 type View = 'dashboard' | 'patients' | 'patientDetail' | 'appointments' | 'prescriptions' | 'billing';
 
 // --- HELPER COMPONENTS ---
@@ -114,11 +66,12 @@ const PatientCard: React.FC<{ patient: Patient; onSelect: (id: string) => void }
 );
 
 
-const App: React.FC = () => {
+const App: React.FC = () => 
+{
     // --- STATE MANAGEMENT ---
-    const [patients, setPatients] = usePersistentState<Patient[]>('dental-patients', initialPatients);
-    const [appointments, setAppointments] = usePersistentState<Appointment[]>('dental-appointments', initialAppointments);
-    const [prescriptions, setPrescriptions] = usePersistentState<Prescription[]>('dental-prescriptions', initialPrescriptions);
+    const [patients, setPatients] = useState<Patient[]>(initialPatients);
+    const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+    const [prescriptions, setPrescriptions] = useState<Prescription[]>(initialPrescriptions);
     
     const [currentView, setCurrentView] = useState<View>('dashboard');
     const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
